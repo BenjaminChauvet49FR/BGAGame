@@ -1,0 +1,176 @@
+/**
+ *------
+ * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
+ * HexField implementation : © <Your name here> <Your email address here>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * hexfield.css
+ *
+ * HexField stylesheet
+ *
+ */
+
+/*
+    This is the CSS stylesheet of your game User Interface.
+    
+    Styles defined on this file will be applied to the HTML elements you define in your
+    HTML template (hexfield_hexfield.tpl), and to HTML elements you create dynamically
+    (in hexfield.js).
+    
+    Usually, you are using CSS to:
+    
+    1°) define the overall layout of your game
+        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
+
+    2°) create your CSS-sprites:
+        All images of your games should be gathered into a small number of image files. Then, using
+        background-image and background-position CSS properties, you create HTML blocks that can 
+        display these images correctly (see example below).
+    
+    3°) ... anything else:
+        It is really easy to add and remove CSS classes dynamically from your Javascript with
+        dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
+        (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
+        very often, using CSS classes for the logic of your user interface allow you to do complex
+        thing easily.
+        
+        
+     Note: on the production platform, this file will be compressed and comments will be removed.
+           Consequently, don't hesitate to put as many comments as necessary.
+*/
+
+
+/* Note: you must not use any @import directive */
+
+
+/********* You can start writing your CSS below this line: **********/
+
+
+/*
+    Example of CSS sprites (a black token and a white token, 20x20px each, embedded in the same "tokens.png" 40x20px image):
+
+    .white_token {
+        background-image: url('img/tokens.png');
+        background-position: 0px 0px;
+    }
+    .black_token {
+        background-image: url('img/tokens.png');
+        background-position: -20px 0px;
+    }
+    .token {
+        width: 20px;
+        height: 20px;
+        background-repeat: none;
+    }
+*/
+
+#game_board {
+   width: 864px;
+   height: 864px;
+   position: relative;
+   background-color: red;
+   z-index: 0;
+}
+
+.hextile {
+	width: 84px;
+    height: 84px;
+	position: absolute;
+	background-image:url('img/hexes.png');
+	z-index: 1;
+}
+
+.possible_move {
+	width: 84px;
+	height: 84px;
+	position: absolute;
+	background-image:url('img/hex_trans.png');
+	z-index: 4;
+}
+
+.hextile_plains {
+	background-position:0px 84px;
+}
+
+.hextile_lake {
+	background-position:-84px 84px;
+}
+
+.hextile_forest {
+	background-position:-168px 84px;
+}
+
+.hextile_stone {
+	background-position:-252px 84px;
+}
+
+.hextile_iron {
+	background-position:-336px 84px;
+}
+
+.hextile_none {
+	background-position:84px 84px;
+}
+
+.flying_resource {
+	width: 48px;
+    height: 48px;
+	position: absolute;
+	background-image:url('img/ressources.png');
+	z-index: 6;
+}
+
+.flying_resource_food {
+	background-position:-48px 48px;
+}
+.flying_resource_wood {
+	background-position:-96px 48px;
+}
+.flying_resource_stone {
+	background-position:-144px 48px;
+}
+.flying_resource_iron {
+	background-position:-192px 48px;
+}
+
+/* Meeples */
+.meeple {
+	width: 40px;
+    height: 40px;
+	position: absolute;
+	background-image:url('img/meeples.png');
+	z-index: 250;
+}
+
+.marker {
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	background-image:url('img/takenMark.png');
+	z-index: 230;
+
+}
+
+.rsrc_icon {
+	display: inline-block;
+	width: 12px;
+    height: 12px;
+	background-image:url('img/icons_ressources.png');
+}
+
+/* Player panels */
+.rsrc_food_icon {
+	background-position:-12px 0px;
+}
+.rsrc_wood_icon {
+	background-position:-24px 0px;
+}
+.rsrc_stone_icon {
+	background-position:-36px 0px;
+}
+.rsrc_iron_icon {
+	background-position:-48px 0px;
+}
