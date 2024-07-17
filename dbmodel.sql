@@ -42,7 +42,18 @@ ALTER TABLE `player` ADD `stone` INT UNSIGNED NOT NULL DEFAULT '0';
 
 CREATE TABLE IF NOT EXISTS `hexfieldtaken` (
   `x` int(10) unsigned NOT NULL,
-  `y` int(10) NOT NULL,
+  `y` int(10) unsigned NOT NULL,
   `taken` boolean NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
---CREATE UNIQUE INDEX `hexfieldtaken_ind` on `hexfieldtaken` (`y`, `x`);
+CREATE UNIQUE INDEX `hexfieldtaken_ind` on `hexfieldtaken` (`y`, `x`);
+
+
+CREATE TABLE IF NOT EXISTS `buildingbuilt` (
+  `x` int(10) unsigned NOT NULL,
+  `y` int(10) unsigned NOT NULL,
+  `player` int(10) unsigned,
+  `kind` int(10) unsigned
+   --FOREIGN KEY (player) REFERENCES player(player_id) (les cles étrangères ne semblent pas les bienvenues)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX `buildingbuilt_player_ind` on `buildingbuilt` (`player`);
+CREATE UNIQUE INDEX `buildingbuilt_position_ind` on `buildingbuilt` (`y`, `x`);

@@ -87,6 +87,14 @@ function (dojo, declare) {
 			}
 			
 			
+			// Buildings
+			for (var k = 0 ; k < gamedatas.buildings.length ; k++) {
+				if (gamedatas.buildings[k].kind != null) {
+					this.placeBuilding(gamedatas.buildings[k].x, gamedatas.buildings[k].y, gamedatas.buildings[k].kind);
+				}
+			}
+			
+			
  
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
@@ -217,6 +225,14 @@ function (dojo, declare) {
 			}
 		},
 		
+		getPixPositionsBuilding : function(p_xTile, p_yTile) {
+			var pix = this.getPixPositionsMeeple(p_xTile, p_yTile);
+			return {
+				x : pix.x,
+				y : pix.y+20
+			}
+		},
+		
 		ID_FOOD : 1,
 		ID_WOOD : 2,
 		ID_STONE : 3,
@@ -226,6 +242,18 @@ function (dojo, declare) {
 			const textRsrc = ["","food","wood","stone","iron"][p_resourceId];
 			console.log(p_playerId + " " + p_resourceId + " " + p_amount);
 			document.getElementById(textRsrc+"count_p"+p_playerId).innerHTML = p_amount;
+		},
+		
+		placeBuilding : function(p_x, p_y, p_kind) {
+			const typeToText = ["house", "farm"]; // TODO dé-durcir
+
+			var pix = this.getPixPositionsBuilding(p_x, p_y, p_kind);
+			dojo.place( this.format_block( 'jstpl_building', {
+				kind : typeToText[p_kind],
+				pixX : pix.x,
+				pixY : pix.y
+            } ) , 'game_board' );
+			
 		},
 		
 		getHexX : function(p_x, p_y) {
@@ -241,16 +269,16 @@ function (dojo, declare) {
 			for( var y in p_listOfSpaces) {
 				for( var x in p_listOfSpaces[y]) {
 					pix = this.getPixPositionsHex(x, y);
-					dojo.place( this.format_block( 'possible_move', {
+					dojo.place( this.format_block( 'jstpl_possible_move', {
 						pixX : pix.x,
 						pixY : pix.y
-					} ) , 'possible_move_place' );
+					} ) , 'game_board' );
 				}
 			}
 		},
 		
 		clearSpacesReachableInOne : function() {
-			document.getElementById('possible_move_place').innerHTML = "";
+			document.querySelectorAll('.possible_move').forEach(e => e.remove());
 		},
 		
 		
@@ -456,12 +484,12 @@ function (dojo, declare) {
 		notif_extractResource: function( notif )
         {
 			var pix = this.getPixPositionsMeeple(notif.args.x, notif.args.y);
-			dojo.place( this.format_block( 'flying_resource', {
+			dojo.place( this.format_block( 'jstpl_flying_resource', {
                 jsId: this.frCounter,
                 type: notif.args.resourceText,
 				pixX : pix.x,
 				pixY : pix.y
-            } ) , 'flying_resource_place' );
+            } ) , 'game_board' );
 			this.slideToObject( "flying_resource_" + this.frCounter, 'overall_player_board_'+notif.args.playerId ).play();
 			document.getElementById("flying_resource_" + this.frCounter);			
 			this.frCounter++;
@@ -470,11 +498,11 @@ function (dojo, declare) {
 			}
 			
 			pix = this.getPixPositionsExtractedRsrc(notif.args.x, notif.args.y);
-			dojo.place( this.format_block( 'taken_marker', {
+			dojo.place( this.format_block( 'jstpl_taken_marker', {
                 type: notif.args.resourceText,
-				pixX : pix.x,
-				pixY : pix.y
-            } ) , 'taken_marker_place' );
+				pixOffsetX : pix.x,
+				pixOffsetY : pix.y
+            } ) , 'game_board' );
 			
 			this.updateResourceValue(notif.args.playerId, notif.args.resourceId, notif.args.resourceAmount);
         },
@@ -482,6 +510,7 @@ function (dojo, declare) {
 			this.updateResourceValue(notif.args.playerId, this.ID_WOOD, notif.args.newWood);
 			this.updateResourceValue(notif.args.playerId, this.ID_STONE, notif.args.newStone);
 			this.updateResourceValue(notif.args.playerId, this.ID_IRON, notif.args.newIron);
+			this.placeBuilding(notif.args.x, notif.args.y, notif.args.kind);
 		}
    });             
 });

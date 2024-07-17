@@ -30,9 +30,6 @@
 	<div class="hextile hextile_{TYPE}" id="hextile_{X}_{Y}" style="left: {LEFT}px; top: {TOP}px;">
 	</div>
 	<!-- END hex -->
-	<div id="flying_resource_place"></div>
-	<div id="taken_marker_place"></div>
-	<div id="possible_move_place"></div>
 </div>
 
 <script type="text/javascript">
@@ -47,6 +44,9 @@ var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${MY_ITEM_I
 
 var jstpl_moving_meeple = '<div class="meeple" id="moving_meeple_${player_id}" style="background-position:-${xpc}00% 0%; left: ${pixOffsetX}px; top: ${pixOffsetY}px;"></div>';
 var jstpl_taken_marker = '<div class="marker" style="left: ${pixOffsetX}px; top: ${pixOffsetY}px;"></div>';
+var jstpl_flying_resource='<div class="flying_resource flying_resource_${type}" id="flying_resource_${jsId}" style="left: ${pixX}px; top: ${pixY}px;"></div>';
+var jstpl_possible_move='<div class="possible_move" style="left: ${pixX}px; top: ${pixY}px;"></div>';
+var jstpl_building='<div class="building building_${kind}" style="left: ${pixX}px; top: ${pixY}px;"></div>';
 
 var jstpl_player_board = '\<div class="cp_board">\
     <div id="rsrc_food_icon_p${id}" class="rsrc_icon rsrc_food_icon"></div><span id="foodcount_p${id}">0</span>\
@@ -55,9 +55,6 @@ var jstpl_player_board = '\<div class="cp_board">\
     <div id="rsrc_iron_icon_p${id}" class="rsrc_icon rsrc_iron_icon"></div><span id="ironcount_p${id}">0</span>\
 </div>';
 
-var flying_resource='<div class="flying_resource flying_resource_${type}" id="flying_resource_${jsId}" style="left: ${pixX}px; top: ${pixY}px;"></div>';
-var taken_marker='<div class="marker" style="left: ${pixX}px; top: ${pixY}px;"></div>';
-var possible_move='<div class="possible_move" style="left: ${pixX}px; top: ${pixY}px;"></div>';
 
 
 </script>  

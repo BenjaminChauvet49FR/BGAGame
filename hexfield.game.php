@@ -87,14 +87,20 @@ class HexField extends Table
 		
 		// Create the land
 		$values = array();
+		$values2 = array();
 		$sql = "INSERT INTO hexfieldtaken (x, y, taken) VALUES ";
+		$sql2 = "INSERT INTO buildingbuilt (x, y, player, kind) VALUES ";
 		for ($y = 0 ; $y < $this->Y_SIZE ; $y++) {
 			for ($x = 0 ; $x < $this->X_SIZE ; $x++) {
-				$values[] =  "(".$this->getHexX($x, $y).",".$y.",FALSE)";
+				$xx = $this->getHexX($x, $y);
+				$values[] =  "(".$xx.",".$y.",FALSE)";
+				$values2[] =  "(".$xx.",".$y.",null, null)";
 			}
 		}
         $sql .= implode( ',', $values );
+        $sql2 .= implode( ',', $values2 );
         $this->DbQuery( $sql );
+        $this->DbQuery( $sql2 );
 
 		
         $this->reattributeColorsBasedOnPreferences( $players, $gameinfos['player_colors'] );
@@ -140,6 +146,7 @@ class HexField extends Table
         $result['players'] = $this->getCollectionFromDb( $sql );
 		
 		$result['hexfieldtaken'] =  $this->getObjectListFromDB("SELECT * FROM hexfieldtaken");
+		$result['buildings'] =  $this->getObjectListFromDB("SELECT * FROM buildingbuilt");
 	
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
   
@@ -367,7 +374,14 @@ class HexField extends Table
 	
 	function clickBuildHere() {
 		self::checkAction( 'decideBuildHere_act' );
-		$this->gamestate->nextState('buildHere_tra');		
+		$player_id = self::getActivePlayerId();
+		$coorsM = $this->getCoorsFromPlayerMeeple($player_id);
+		$isTaken = self::getUniqueValueFromDb("SELECT kind FROM buildingbuilt WHERE x='".$coorsM['x']."' and y='".$coorsM['y']."'");
+		if ($isTaken == null) {			
+			$this->gamestate->nextState('buildHere_tra');		
+		} else {
+			throw new BgaVisibleSystemException(self::_("This space is already occupied by a building."));
+		}
 	}
 	
 	function moveMeeple( $x, $y ) // TODO change into p_x, p_y
@@ -421,9 +435,6 @@ class HexField extends Table
 			$costArray["wood"] = 2;
 		}
 		
-		$x = 0; // Todo, obviously :)
-		$y = 0;
-		
 		$buildingName = ["house", "farm"][$p_buildingId];
 		
 		// Check the player's resources
@@ -433,10 +444,14 @@ class HexField extends Table
 		if ($player_resources["wood"] < $costArray["wood"] or $player_resources["iron"] < $costArray["iron"] or $player_resources["stone"] < $costArray["stone"]) {
 			throw new BgaVisibleSystemException(self::_("You don't have the required resources for this building !"));
 		}
+		$coorsM = $this->getCoorsFromPlayerMeeple($player_id);
+		$x = $coorsM['x']; 
+		$y = $coorsM['y'];
 		$newWood = $player_resources["wood"]-$costArray["wood"];
-		$newStone = $player_resources["wood"]-$costArray["wood"];
-		$newIron = $player_resources["wood"]-$costArray["wood"];
+		$newStone = $player_resources["stone"]-$costArray["stone"];
+		$newIron = $player_resources["iron"]-$costArray["iron"];
 		$this->DbQuery("UPDATE player SET wood=$newWood, stone=$newStone, iron=$newIron WHERE player_id='$player_id'");
+		$this->DbQuery("UPDATE buildingbuilt SET player=$player_id, kind=$p_buildingId WHERE x=$x and y=$y");
 		
 		self::notifyAllPlayers( "build", clienttranslate( '${player_name} builds ${buildingName} to ${x},${y}' ), array(
 			'playerId' => $player_id,
@@ -449,6 +464,7 @@ class HexField extends Table
 			'y' => $y
 		) ); 
 		$this->gamestate->nextState('moveMeeple_tra');
+		$this->DbQuery("UPDATE buildingbuilt SET player=$player_id, kind=$p_buildingId WHERE x=$x and y=$y");
 	}
 	
 	
